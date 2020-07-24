@@ -1,0 +1,7 @@
+pymongo
+aiohttp
+aiohttp_oauth2
+aiohttp-session
+aiohttp-remotes
+aiohttp-jinja2
+Jinja2

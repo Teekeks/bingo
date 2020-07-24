@@ -1,0 +1,4 @@
+/access.log
+/settings.json
+/venv/*
+/.idea/*

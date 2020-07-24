@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <title>Bingo!</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/style.css?v=6">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    {% endblock %}
+</head>
+<body>
+<header>
+  <nav>
+    <div class="nav-wrapper teal">
+        <a href="/" class="brand-logo">Bingo</a>
+        <ul class="right">
+            {% if user %}
+            <li><a class="dropdown-trigger" href="#!" data-target="dropdown-user"><img src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}.png" class="useravatar">   {{ user.username }}<i class="material-icons right">arrow_drop_down</i></a></li>
+            <ul id="dropdown-user" class="dropdown-content">
+              <li><a href="/new/"><i class="material-icons left">add_circle_outline</i>New Board</a></li>
+              <li><a href="/logout/"><i class="material-icons left">power_settings_new</i>Logout</a></li>
+            </ul>
+            {% else %}
+            <li><a href="/login/discord/auth"><i class="material-icons left">power_settings_new</i>Login using discord</a></li>
+            {% endif %}
+        </ul>
+    </div>
+  </nav>
+  </header>
+  <main>
+
+  
+    <div id="content" class="content">{% block content %}{% endblock %}</div>
+  </main>
+  <footer class="page-footer teal lighten-1">
+  <div class="footer-copyright">
+    <div class="container">
+    © 2020 Copyright by Lena "Teekeks" During |
+    <a class="grey-text text-lighten-3" href="https://teawork.de" target="_blank" rel="noopener noreferrer">Website</a> |
+    <a class="grey-text text-lighten-3" href="https://reddit.com/u/Teekeks" target="_blank" rel="noopener noreferrer">Reddit</a> |
+    <a class="grey-text text-lighten-3" href="https://github.com/Teekeks/" target="_blank" rel="noopener noreferrer">Github</a> |
+    <a class="grey-text text-lighten-3" href="https://twitter.com/Teekeks" target="_blank" rel="noopener noreferrer">Twitter</a>
+    </div>
+  </div>
+  <script>
+        $(document).ready(function () {
+            M.AutoInit();
+        });
+    </script>
+</footer>
+</body>
+</html>

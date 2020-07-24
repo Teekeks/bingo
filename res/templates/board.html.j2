@@ -1,0 +1,48 @@
+{% if allowed %}
+	<div class="container">
+		{% for row in board %}
+		<div class="row field">
+			<div class="col s1"></div>
+			{% for cell in row %}
+				<div class="col s2 bingo-card {% if cell.checked %}bingo-card-checked green lighten-1{% else %}amber lighten-3{% endif %}" data-idx="{{cell.idx}}">
+					<div class="bcc-c">
+						<span class="bingo-card-content">{{cell.title}}</span>	
+					</div>
+				</div>
+			{% endfor %}
+			<div class="col s1"></div>
+		</div>
+		{% endfor %}
+	</div>
+	<script type="text/javascript">
+	$(".bingo-card").click(function() {
+		$.ajax({
+	    type: "GET",
+	    url: '/ajax/board/flip/'+$(this).data("idx"),
+	    success: function(data) {
+	        $('#loading_content').html(data);
+	        $('.tabs').tabs();
+	     },
+	    error: function(data) {
+	     	console.log('An error occured')
+	     	$('#loading_content').html("An error occured");
+	          
+	    }
+	   });
+	});
+	</script>
+{% else %}
+<div class="center-align">  
+  <div class="row">
+    <div class="col m3"></div>
+    <div class="col m6">
+      <div class="card red darken-1">
+        <div class="card-content white-text">
+          <span class="card-title">Not allowed</span>
+          <p>Sorry but you are not allowed to use this tool. <br>Please contact Teekeks#0001 if you think this is an error!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

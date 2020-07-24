@@ -1,0 +1,16 @@
+{
+  "port": 54321,
+  "discord": {
+    "client_id": "",
+    "client_secret": ""
+  },
+  "proxy": {
+    "enabled": true,
+    "trusted": ["127.0.0.1"]
+  },
+  "mongodb": {
+    "host": "moon",
+    "port": 27017,
+    "db": "bingo"
+  }
+}
