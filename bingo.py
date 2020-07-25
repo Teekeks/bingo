@@ -126,7 +126,6 @@ async def handle_new(request):
 async def handle_board(request):
     final = await session_validation(request)
     final['board'] = None
-    final['allowed'] = False
     if final.get('allowed'):
         user = final.get('user')
         entry = db_boards.find_one({'user_id': user.get('id'), 'current': True})
