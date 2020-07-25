@@ -5,3 +5,4 @@ aiohttp-session
 aiohttp-remotes
 aiohttp-jinja2
 Jinja2
+cryptography

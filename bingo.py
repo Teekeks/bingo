@@ -1,14 +1,16 @@
 from aiohttp import web
 import asyncio
 from os import path
-from pprint import pprint
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from pymongo import MongoClient
 import aiohttp_jinja2
 import jinja2
 from aiohttp_oauth2 import oauth2_app
-from aiohttp_session import get_session, setup as session_setup, SimpleCookieStorage
+from aiohttp_session import get_session, setup as session_setup
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
+from cryptography.fernet import Fernet
+from base64 import urlsafe_b64decode
 from aiohttp_remotes import setup as remotes_setup, XForwardedStrict
 import json
 from aiohttp.abc import AbstractAccessLogger
@@ -16,7 +18,6 @@ import logging
 from datetime import datetime
 from typing import Dict, Any
 import random
-import uuid
 
 
 with open('settings.json', 'r') as f:
@@ -165,7 +166,9 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     if cfg.get('proxy', {}).get('enabled', False):
         loop.run_until_complete(remotes_setup(app, XForwardedStrict([cfg.get('proxy', {}).get('trusted')])))
-    session_setup(app, SimpleCookieStorage())
+    # generate key
+    secret_key = urlsafe_b64decode(Fernet.generate_key())
+    session_setup(app, EncryptedCookieStorage(secret_key))
     aiohttp_jinja2.setup(app,
                          loader=jinja2.FileSystemLoader(str(path.join(path.dirname(__file__), 'res/templates/'))))
     dc = cfg["discord"]
