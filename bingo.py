@@ -43,6 +43,21 @@ async def get_session_data(request):
     return entry
 
 
+async def session_validation(request) -> Dict:
+    session = await get_session_data(request)
+    allowed = db_options.find_one({}).get('allowed')
+    final = {
+        "user": session,
+        "logged_in": False,
+        "allowed": False
+    }
+    if session is not None:
+        final['logged_in'] = True
+        if session.get('id') in allowed:
+            final['allowed'] = True
+    return final
+
+
 async def handle_on_login(request: web.Request, token: Dict[str, Any]) -> 'web.Response':
     session = await get_session(request)
     # invalidate old session if exist for user?
@@ -97,75 +112,42 @@ def generate_new(user_id):
 
 @aiohttp_jinja2.template("index.html.j2")
 async def handle_index(request):
-
-    session = await get_session_data(request)
-    final = {
-        "user": session,
-        "logged_in": False
-    }
-    if session is not None:
-        final['logged_in'] = True
-    return final
+    return await session_validation(request)
 
 
 async def handle_new(request):
-    session = await get_session_data(request)
-    final = {
-        "user": session,
-        "logged_in": False
-    }
-    if session is not None:
-        final['logged_in'] = True
-
-        generate_new(session.get('id'))
+    final = await session_validation(request)
+    if final.get('allowed'):
+        generate_new(final.get('user').get('id'))
     return web.HTTPTemporaryRedirect(location="/")
 
 
 @aiohttp_jinja2.template("board.html.j2")
 async def handle_board(request):
-    session = await get_session_data(request)
-    final = {
-        "user": session,
-        "board": None,
-        "logged_in": False,
-        "allowed": False
-    }
-    if session is not None:
-        user = session
-        final['logged_in'] = True
-        allowed = db_options.find_one({}).get('allowed')
-        if user.get('id') in allowed:
-            final['allowed'] = True
-            entry = db_boards.find_one({'user_id': user.get('id'), 'current': True})
-            if entry is None:
-                entry = generate_new(user.get('id'))
-            final['board'] = entry.get('board')
+    final = await session_validation(request)
+    final['board'] = None
+    final['allowed'] = False
+    if final.get('allowed'):
+        user = final.get('user')
+        entry = db_boards.find_one({'user_id': user.get('id'), 'current': True})
+        if entry is None:
+            entry = generate_new(user.get('id'))
+        final['board'] = entry.get('board')
     return final
 
 
 @aiohttp_jinja2.template("board.html.j2")
 async def handle_flip(request):
-    session = await get_session_data(request)
-    final = {
-        "user": session,
-        "board": None,
-        "logged_in": False,
-        "allowed": False
-    }
+    final = await session_validation(request)
     idx = int(request.match_info['idx'])
-    if session is not None:
-        user = session
-        final['logged_in'] = True
-        allowed = db_options.find_one({}).get('allowed')
-        if user.get('id') in allowed:
-            final['allowed'] = True
-            entry = db_boards.find_one({'user_id': user.get('id'), 'current': True})
-            for row in entry['board']:
-                for e in row:
-                    if idx == e.get('idx'):
-                        e['checked'] = not e['checked']
-            db_boards.replace_one({'_id': entry.get('_id')}, entry)
-            final['board'] = entry.get('board')
+    if final.get('allowed'):
+        entry = db_boards.find_one({'user_id': final.get('user').get('id'), 'current': True})
+        for row in entry['board']:
+            for e in row:
+                if idx == e.get('idx'):
+                    e['checked'] = not e['checked']
+        db_boards.replace_one({'_id': entry.get('_id')}, entry)
+        final['board'] = entry.get('board')
     return final
 
 
