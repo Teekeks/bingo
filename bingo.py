@@ -151,6 +151,31 @@ async def handle_flip(request):
     return final
 
 
+async def handle_lobby_list(request):
+    # FIXME make this propper
+    return web.HTTPTemporaryRedirect(location="/lobby/5f1b028119c735354fcc1812/")
+
+
+@aiohttp_jinja2.template('lobby_page.html.j2')
+async def handle_show_lobby(request):
+    final = await session_validation(request)
+    idx = request.match_info['idx']
+    final['id'] = idx
+    return final
+
+
+@aiohttp_jinja2.template('lobby_show.html.j2')
+async def handle_set_lobby(request):
+    final = await session_validation(request)
+    idx = request.match_info['idx']
+    final['id'] = idx
+    if final.get('allowed'):
+        lobby = db_options.find_one({'_id': ObjectId(idx)})
+        final['options'] = lobby.get('options')
+        final['allowed'] = lobby.get('allowed')
+    return final
+
+
 class AccessLogger(AbstractAccessLogger):
 
     def log(self, request, response, time):
@@ -186,8 +211,12 @@ if __name__ == '__main__':
     app.add_routes([web.get('/', handle_index),
                     web.get('/new/', handle_new),
                     web.get('/logout/', handle_logout),
+                    web.get('/lobby/', handle_lobby_list),
+                    web.get('/lobby/{idx}/', handle_show_lobby),
                     web.get('/ajax/board/', handle_board),
-                    web.get('/ajax/board/flip/{idx}', handle_flip)])
+                    web.get('/ajax/board/flip/{idx}', handle_flip),
+                    web.get('/ajax/lobby/{idx}/', handle_set_lobby),
+                    ])
     app.logger.setLevel(logging.INFO)
     logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('access.log')])
     web.run_app(app, port=cfg.get('port'), access_log_class=AccessLogger)

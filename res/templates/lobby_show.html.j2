@@ -1,0 +1,63 @@
+{% if allowed %}
+	<div class="container">
+		<div class="row">
+			<div class="col m12">
+				<h2>Lobby {{idx}}</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col m12">
+				<ul class="collection with-header">
+			        <li class="collection-header"><h4>Options</h4></li>
+			        {% for opt in options %}
+			        	<li class="collection-item">{{opt}}<a href="javascript:not_implemented()" class="secondary-content red-text"><i class="material-icons">delete</i></a></li>
+			        {% endfor %}
+			        <li class="collection-item slim-item">
+	        	    	<a href="javascript:not_implemented()" class="green btn"><i class="material-icons">add</i></a>
+			        	<div class="input-field inline">
+			        		<input type="text" name="new_field" class="full-label">
+			        		<label for="new_field">New Option</label>
+			        	</div>
+			        </li>
+		    	</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col m12">
+				<ul class="collection with-header">
+			        <li class="collection-header"><h4>Allowed users</h4></li>
+			        {% for al in allowed %}
+			        	<li class="collection-item">{{al}}<a href="javascript:not_implemented()" class="secondary-content red-text"><i class="material-icons">delete</i></a></li>
+			        {% endfor %}
+			        <li class="collection-item slim-item">
+	        	    	<a href="javascript:not_implemented()" class="green btn"><i class="material-icons">add</i></a>
+			        	<div class="input-field inline">
+			        		<input type="text" name="new_field" class="full-label">
+			        		<label for="new_field">New User</label>
+			        	</div>
+			        </li>
+		    	</ul>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function not_implemented() {
+			M.toast({html: 'Sorry, not implemented yet :(',
+					 classes: 'red'})
+		}
+	</script>
+{% else %}
+<div class="center-align">  
+  <div class="row">
+    <div class="col m3"></div>
+    <div class="col m6">
+      <div class="card red darken-1">
+        <div class="card-content white-text">
+          <span class="card-title">Not allowed</span>
+          <p>Sorry but you are not allowed to use this tool. <br>Please contact Teekeks#0001 if you think this is an error!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

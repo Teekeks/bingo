@@ -1,0 +1,28 @@
+{% extends "base.html.j2" %}
+
+{% block content %}
+	{% if logged_in %}
+	<div id="loading_content">
+	</div>
+	<script type="text/javascript">
+		// dynamic loading
+		$.ajax({
+		     type: "GET",
+		     url: '/ajax/lobby/{{id}}/',
+		     success: function(data) {
+		          $('#loading_content').html(data);
+		          $('.tabs').tabs();
+		     },
+		     error: function(data) {
+		     	console.log('An error occured')
+		     	$('#loading_content').html("An error occured");
+		          
+		     }
+		   });
+	</script>
+	{% else %}
+		<div class="center-align">
+			<a href="/login/discord/auth" class="waves-effect waves-light btn-large"><i class="material-icons left">power_settings_new</i>Log in using Discord</a>
+		</div>
+	{% endif %}
+{% endblock %}
